@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-info flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-lg p-8">
       <h1 class="text-4xl font-bold text-primary text-center mb-4">Dinosaurs</h1>
-      <p class="text-gray-700 leading-relaxed mb-4">
+      <p class="text-dark leading-relaxed mb-4">
         Welcome to the world of dinosaurs! These magnificent creatures roamed
         the Earth millions of years ago, and their legacy continues to fascinate
         us today. From the towering Brachiosaurus to the fierce Tyrannosaurus
@@ -30,6 +30,7 @@
         :modules="modules"
         :defaultColDef="defaultColDef"
         :gridOptions="gridOptions"
+        @grid-ready="onGridReady"
       />
 
       <div class="flex justify-between mt-4">
@@ -91,6 +92,22 @@ const gridOptions = ref({
   rowHeight: 50,
   headerHeight: 50,
 });
+
+const customTheme = ref({
+  header: {
+    backgroundColor: "#1D1616",
+    color: "#FFF",
+  },
+});
+
+const onGridReady = (params) => {
+  const headerCells = document.querySelectorAll(".ag-header-cell");
+  headerCells.forEach((cell) => {
+    cell.style.backgroundColor = customTheme.value.header.backgroundColor;
+    cell.style.color = customTheme.value.header.color;
+  });
+};
+
 const getDinosaurData = async () => {
   try {
     loading.value = true;
