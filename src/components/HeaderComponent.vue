@@ -18,9 +18,6 @@
               >
                 {{ link.name }}
               </router-link>
-              <button @click="toggleDarkMode" class="ml-4 p-2 rounded-md bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-                {{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}
-              </button>
             </div>
           </div>
         </div>
@@ -58,23 +55,12 @@ import { ref, watch, onMounted } from 'vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import { MenuIcon, XIcon } from "@heroicons/vue/outline";
 
-const isDarkMode = ref(false);
 const isScrolledDown = ref(false);
 const links = [
   { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
   { name: 'Dinosaurs', href: '/dinosaur' },
 ];
-
-const setDarkMode = (value) => {
-  isDarkMode.value = value;
-  if (value) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
-  localStorage.setItem('darkMode', value);
-};
 
 const checkScroll = () => {
   if (window.scrollY > 100) {
@@ -90,21 +76,7 @@ onMounted(() => {
   checkScroll();
 });
 
-const toggleDarkMode = () => {
-  setDarkMode(!isDarkMode.value);
-};
-
-watch(isDarkMode, (newValue) => {
-  setDarkMode(newValue);
-});
-
 onMounted(() => {
-  const savedDarkMode = localStorage.getItem('darkMode');
-  if (savedDarkMode !== null) {
-    setDarkMode(savedDarkMode === 'true');
-  } else {
-    setDarkMode(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  }
   checkScroll();
 });
 </script>

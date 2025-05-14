@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-info flex items-center justify-center">
-    <div class="bg-white shadow-lg rounded-lg p-8">
+    <div class="bg-white shadow-lg rounded-lg p-4">
       <h1 class="text-4xl font-bold text-primary text-center mb-4">Dinosaurs</h1>
       <p class="text-dark leading-relaxed mb-4">
         Welcome to the world of dinosaurs! These magnificent creatures roamed
