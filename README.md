@@ -87,13 +87,15 @@ On grid ready is the function triggered to change the default styles of ag-grid 
 
 ## Screenshots
 
-To be added in future
+Only one screenshot is added, it is from the homepage and shows the tabular view of Dinosaur.
+
+![Dinosaur Table View](./screenshots/1.png)
 
 ## Updates
 - **v1.0.0**: Initial release with basic functionality.
 - **v1.1.0**: Added new features and improved performance.
 
 ## Thank You
-Thank you for exploring the Vue Dino App! Feel free to contribute or provide feedback to help improve the project.
+Thank you for exploring the Vue Dino App! Feel free to contribute or provide feedback to help improve the project. If you liked this project consider giving it a ⭐
 
 Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
