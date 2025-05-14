@@ -85,6 +85,26 @@ On grid ready is the function triggered to change the default styles of ag-grid 
 - HTML5
 - CSS3
 
+## Writing Test cases
+
+Test cases are written using Vitest framework. Install the related dependencies for the testing framework and tweak vite config settings.
+
+```
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [vue()],
+  test: {
+    environment: 'happy-dom',
+  },
+  server: {
+    port: 8080
+  }
+})
+```
+
 ## Screenshots
 
 Only one screenshot is added, it is from the homepage and shows the tabular view of Dinosaur.
