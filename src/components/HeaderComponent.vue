@@ -63,7 +63,7 @@ const isScrolledDown = ref(false);
 const links = [
   { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
-  { name: 'Dinosaurs', href: '/dinosaurs' },
+  { name: 'Dinosaurs', href: '/dinosaur' },
 ];
 
 const setDarkMode = (value) => {
