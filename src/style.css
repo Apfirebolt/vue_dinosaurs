@@ -20,13 +20,13 @@ h2 {
 }
 
 @theme {
-  --color-primary: #2F1847;
-  --color-secondary: #624763;
-  --color-tertiary: #C62E65;
-  --color-light: #EDE7E3;
+  --color-primary: #5409DA;
+  --color-secondary: #B6B09F;
+  --color-tertiary: #4E71FF;
+  --color-light: #F2F2F2;
   --color-dark: #1D1616;
   --color-danger: #E82561;
   --color-success: #5B913B;
-  --color-info: #f9f871;
+  --color-info: #BBFBFF;
   --color-accent-dark: #F9B3D1;
 }

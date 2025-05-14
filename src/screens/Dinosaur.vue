@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-green-100 flex items-center justify-center">
+  <div class="min-h-screen bg-info flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-lg p-8">
-      <h1 class="text-4xl font-bold text-green-800 mb-4">Dinosaurs</h1>
+      <h1 class="text-4xl font-bold text-primary text-center mb-4">Dinosaurs</h1>
       <p class="text-gray-700 leading-relaxed mb-4">
         Welcome to the world of dinosaurs! These magnificent creatures roamed
         the Earth millions of years ago, and their legacy continues to fascinate
@@ -14,10 +14,12 @@
         paleontology enthusiast or just curious, there's always something new to
         discover about dinosaurs.
       </p>
-      <p class="text-gray-700 leading-relaxed">
+      <p class="text-gray-700 leading-relaxed mb-5">
         Thank you for joining us on this prehistoric journey. Let's dive into
         the age of dinosaurs together!
       </p>
+
+      <Loader v-if="loading" />
 
       <ag-grid-vue
         v-if="dinosaurData"
@@ -29,6 +31,23 @@
         :defaultColDef="defaultColDef"
         :gridOptions="gridOptions"
       />
+
+      <div class="flex justify-between mt-4">
+        <button
+          @click="goToPreviousPage"
+          :disabled="!dinosaurData || !dinosaurData.previous"
+          class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Previous
+        </button>
+        <button
+          @click="goToNextPage"
+          :disabled="!dinosaurData || !dinosaurData.next"
+          class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Next
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -40,9 +59,11 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { AgGridVue } from "@ag-grid-community/vue3";
+import Loader from "../components/Loader.vue";
 
 const dinosaurData = ref(null);
 const loading = ref(false);
+const currentPage = ref(1);
 const modules = ref([ClientSideRowModelModule]);
 
 // ag grid config
@@ -73,12 +94,28 @@ const gridOptions = ref({
 const getDinosaurData = async () => {
   try {
     loading.value = true;
-    const response = await axios.get("https://softgenie.org/api/dinosaur");
+    const response = await axios.get(
+      `https://softgenie.org/api/dinosaur?page=${currentPage.value}`
+    );
     dinosaurData.value = response.data;
   } catch (error) {
     console.error("Error fetching dinosaur data:", error);
   } finally {
     loading.value = false;
+  }
+};
+
+const goToNextPage = () => {
+  if (dinosaurData.value && dinosaurData.value.next) {
+    currentPage.value++;
+    getDinosaurData();
+  }
+};
+
+const goToPreviousPage = () => {
+  if (dinosaurData.value && dinosaurData.value.previous) {
+    currentPage.value--;
+    getDinosaurData();
   }
 };
 

@@ -1,5 +1,5 @@
 <template>
-  <Disclosure :class="['border-b-4 border-b-orange-500 lg:py-2 fixed top-0 z-20 w-full transition-all duration-300', isScrolledDown ? 'bg-primary-300 dark:bg-slate-800' : 'bg-primary-200 dark:bg-slate-700 dark:text-white']" as="nav" v-slot="{ open }">
+  <Disclosure :class="['border-b-4 border-b-orange-500 lg:py-2 fixed top-0 z-20 w-full transition-all duration-300', isScrolledDown ? 'bg-dark dark:bg-slate-800' : 'bg-secondary dark:bg-slate-700 dark:text-white']" as="nav" v-slot="{ open }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center h-16">
         <div class="flex items-center w-full justify-between">
@@ -14,7 +14,7 @@
                 v-for="link in links"
                 :key="link.name"
                 :to="link.href"
-                class="text-gray-300 hover:bg-primary-100 transition-all duration-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                class="text-white hover:bg-primary transition-all duration-200 hover:text-white px-3 py-2 rounded-md font-medium"
               >
                 {{ link.name }}
               </router-link>
