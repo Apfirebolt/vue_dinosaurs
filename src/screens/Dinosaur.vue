@@ -1,7 +1,9 @@
 <template>
   <div class="min-h-screen bg-info flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-lg p-4">
-      <h1 class="text-4xl font-bold text-primary text-center mb-4">Dinosaurs</h1>
+      <h1 class="text-4xl font-bold text-primary text-center mb-4">
+        Dinosaurs
+      </h1>
       <p class="text-dark leading-relaxed mb-4">
         Welcome to the world of dinosaurs! These magnificent creatures roamed
         the Earth millions of years ago, and their legacy continues to fascinate
@@ -29,6 +31,7 @@
         :rowData="dinosaurData.results"
         :modules="modules"
         :defaultColDef="defaultColDef"
+        :rowClassRules="rowClasses"
         :gridOptions="gridOptions"
         @grid-ready="onGridReady"
       />
@@ -87,10 +90,22 @@ const defaultColDef = ref({
   resizable: true,
 });
 
+const rowClasses = ref({
+  carnivorous: "red-row",
+  herbivorous: "green-row",
+  omnivorous: "blue-row",
+});
+
 const gridOptions = ref({
   animateRows: true,
-  rowHeight: 50,
+  rowHeight: 30,
   headerHeight: 50,
+  getRowClass: (params) => {
+    if (params.data.diet === 'carnivorous') {
+      return 'red-row';
+    }
+    return '';
+  }
 });
 
 const customTheme = ref({
@@ -140,3 +155,9 @@ onMounted(() => {
   getDinosaurData();
 });
 </script>
+
+<style>
+.red-row {
+  background-color: #ffcccc; /* Light red background for carnivorous dinosaurs */
+}
+</style>
