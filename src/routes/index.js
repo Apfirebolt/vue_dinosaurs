@@ -19,6 +19,11 @@ const routes = [
         component: () => import('../screens/Dinosaur.vue')
     },
     {
+        path: '/composables',
+        name: 'Composables',
+        component: () => import('../screens/Composable.vue')
+    },
+    {
         path: '/:catchAll(.*)',
         name: 'NotFound',
         component: NotFound

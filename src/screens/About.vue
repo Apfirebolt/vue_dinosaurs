@@ -12,11 +12,21 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: "About",
-};
-</script>
+<script setup>
+import { ref, onMounted, watchEffect } from "vue";
+import { useDinosaur } from "../composables/useDinosaur";
 
-<style scoped>
-</style>
+const { dinosaurs, getDinosaur } = useDinosaur();
+
+console.log('Dinosaurs in about page:', dinosaurs.value);
+
+// watchEffect(() => {
+//   console.log('Changed value of dinosaurs about:', dinosaurs.value);
+// });
+
+// onMounted(() => {
+//   if (dinosaurs.value.length === 0) {
+//     getDinosaur();
+//   }
+// });
+</script>

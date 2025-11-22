@@ -6,38 +6,38 @@ import axios from "axios";
 vi.mock("axios");
 
 describe("Dinosaur.vue", () => {
-    let wrapper;
+  let wrapper;
 
-    beforeEach(() => {
-        wrapper = mount(Dinosaur, {
-            global: {
-                stubs: {
-                    Loader: true,
-                    "ag-grid-vue": true,
-                },
-            },
-        });
+  beforeEach(() => {
+    wrapper = mount(Dinosaur, {
+      global: {
+        stubs: {
+          Loader: true,
+          "ag-grid-vue": true,
+        },
+      },
     });
+  });
 
-    it("renders the header correctly", () => {
-        expect(wrapper.find("h1").text()).toBe("Dinosaurs");
-    });
+  it("renders the header correctly", () => {
+    expect(wrapper.find("h1").text()).toBe("Dinosaurs");
+  });
 
-    it("fetches dinosaur data on mount", async () => {
-        const mockData = {
-            data: {
-                results: [{ id: 1, name: "Tyrannosaurus Rex" }],
-                next: null,
-                previous: null,
-            },
-        };
-        axios.get.mockResolvedValueOnce(mockData);
+  it("fetches dinosaur data on mount", async () => {
+    const mockData = {
+      data: {
+        results: [{ id: 1, name: "Tyrannosaurus Rex" }],
+        next: null,
+        previous: null,
+      },
+    };
+    axios.get.mockResolvedValueOnce(mockData);
 
-        await wrapper.vm.getDinosaurData();
+    await wrapper.vm.getDinosaurData();
 
-        expect(axios.get).toHaveBeenCalledWith(
-            "https://softgenie.org/api/dinosaur?page=1"
-        );
-        expect(wrapper.vm.dinosaurData).toEqual(mockData.data);
-    });
+    expect(axios.get).toHaveBeenCalledWith(
+      "https://softgenie.org/api/dinosaur?page=1"
+    );
+    expect(wrapper.vm.dinosaurData).toEqual(mockData.data);
+  });
 });
