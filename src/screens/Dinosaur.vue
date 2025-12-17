@@ -23,6 +23,15 @@
 
       <Loader v-if="loading" />
 
+      <div>
+        <input
+          v-model="searchText"
+          type="text"
+          placeholder="Search Dinosaurs..."
+          class="border border-gray-300 rounded px-3 py-2 mb-4 w-full"
+        />
+      </div>
+
       <ag-grid-vue
         v-if="dinosaurData"
         class="ag-theme-alpine"
@@ -57,7 +66,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed, watchEffect, watch } from "vue";
 import axios from "axios";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
@@ -68,6 +77,7 @@ import Loader from "../components/Loader.vue";
 const dinosaurData = ref(null);
 const loading = ref(false);
 const currentPage = ref(1);
+const searchText = ref("");
 const modules = ref([ClientSideRowModelModule]);
 
 // ag grid config
@@ -153,6 +163,18 @@ const goToPreviousPage = () => {
 
 onMounted(() => {
   getDinosaurData();
+});
+
+watch(searchText, (newValue) => {
+  if (dinosaurData.value && newValue) {
+    const filteredResults = dinosaurData.value.results.filter((dino) =>
+      dino.name.toLowerCase().includes(newValue.toLowerCase()) || dino.diet.toLowerCase().includes(newValue.toLowerCase()) 
+      || dino.lived_in.toLowerCase().includes(newValue.toLowerCase())
+    );
+    dinosaurData.value.results = filteredResults;
+  } else {
+    getDinosaurData();
+  }
 });
 </script>
 
