@@ -21,10 +21,11 @@
                 </button>
                 <!-- Mega Dropdown Menu -->
                 <div v-if="showMegaMenu"
-                     class="absolute left-0 top-full w-screen bg-white dark:bg-slate-800 shadow-lg py-8 px-16 z-30 flex justify-center"
+                     class="fixed left-0 top-full w-full bg-white dark:bg-slate-800 shadow-lg py-8 px-8 z-30"
+                     style="width: 100vw; margin-left: calc(-50vw + 50%);"
                      @mouseenter="showMegaMenu = true"
                      @mouseleave="showMegaMenu = false">
-                  <div class="grid grid-cols-3 gap-8 w-4/5">
+                  <div class="grid grid-cols-3 gap-8 max-w-7xl mx-auto">
                     <div>
                       <h3 class="font-bold mb-2 text-gray-700 dark:text-white">Documentation</h3>
                       <ul>
@@ -94,7 +95,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import { MenuIcon, XIcon } from "@heroicons/vue/outline";
 
 const isScrolledDown = ref(false);
-const showMegaMenu = ref(true);
+const showMegaMenu = ref(false);
 
 const links = [
   { name: 'Home', href: '/' },
@@ -179,5 +180,17 @@ onMounted(() => {
   background: #1e293b;
   border-color: #334155;
   box-shadow: 0 8px 32px rgba(30,41,59,0.24);
+}
+
+/* Full width mega menu override */
+.full-width-mega-menu {
+  width: 100vw !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-left: calc(-50vw + 50%) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-radius: 0 !important;
 }
 </style>

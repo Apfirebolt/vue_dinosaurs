@@ -11,7 +11,7 @@ describe('Header Component', () => {
     it('displays links correctly', () => {
         const wrapper = mount(Header);
         const links = wrapper.findAll('router-link');
-        expect(links).toHaveLength(5);
+        expect(links).toHaveLength(6);
         expect(links[0].text()).toBe('Home');
         expect(links[1].text()).toBe('About');
         expect(links[2].text()).toBe('Dinosaurs');
