@@ -23,13 +23,20 @@
 
       <Loader v-if="loading" />
 
-      <div>
+      <div class="flex items-center space-x-3 mb-4">
         <input
           v-model="searchText"
           type="text"
           placeholder="Search Dinosaurs..."
-          class="border border-gray-300 rounded px-3 py-2 mb-4 w-full"
+          class="border border-gray-300 rounded px-3 py-2 w-full"
         />
+        <button
+          @click="clearFilters"
+          class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300"
+          title="Clear search and grid filters"
+        >
+          Clear Filters
+        </button>
       </div>
 
       <ag-grid-vue
@@ -60,11 +67,16 @@
         >
           Next
         </button>
+
       </div>
     </div>
   </div>
 </template>
-
+<style>
+.red-row {
+  background-color: #ffcccc; /* Light red background for carnivorous dinosaurs */
+}
+</style>
 <script setup>
 import { onMounted, ref, computed, watchEffect, watch } from "vue";
 import axios from "axios";
@@ -126,6 +138,10 @@ const customTheme = ref({
 });
 
 const onGridReady = (params) => {
+  // expose the grid API so other functions (like clearFilters) can access it
+  gridOptions.value.api = params.api;
+  gridOptions.value.columnApi = params.columnApi;
+
   const headerCells = document.querySelectorAll(".ag-header-cell");
   headerCells.forEach((cell) => {
     cell.style.backgroundColor = customTheme.value.header.backgroundColor;
@@ -144,6 +160,14 @@ const getDinosaurData = async () => {
     console.error("Error fetching dinosaur data:", error);
   } finally {
     loading.value = false;
+  }
+};
+
+const clearFilters = () => {
+  searchText.value = "";
+  // also clear ag grid filters if needed
+  if (gridOptions.value.api) {
+    gridOptions.value.api.setFilterModel(null);
   }
 };
 

@@ -1,98 +1,271 @@
 <template>
   <Disclosure
-    :class="['fixed top-0 z-20 w-full py-3 transition-all duration-300', isScrolledDown ? 'bg-dark dark:bg-slate-800' : 'bg-secondary dark:bg-slate-700 dark:text-white']"
-    as="nav" v-slot="{ open }">
-    <div class="w-4/5 mx-auto">
-      <div class="flex items-center h-16">
-        <div class="flex items-center w-full justify-between">
-          <h2 class="text-2xl text-white font-bold">Vue Dinosaurs</h2>
-          <div class="hidden sm:block sm:ml-6">
-            <div class="flex justify-between items-center space-x-4 w-full">
-              <router-link v-for="link in links" :key="link.name" :to="link.href"
-                class="menu-link text-white px-3 py-2 rounded-md font-medium text-lg relative">
-                {{ link.name }}
-              </router-link>
-              <!-- Mega Dropdown Trigger -->
-              <div class="relative"
-                   @mouseenter="showMegaMenu = true"
-                   @mouseleave="showMegaMenu = false">
-                <button class="menu-link text-white px-3 py-2 rounded-md font-medium text-lg relative">
-                  Resources
-                </button>
-                <!-- Mega Dropdown Menu -->
-                <div v-if="showMegaMenu"
-                     class="fixed left-0 top-full w-full bg-white dark:bg-slate-800 shadow-lg py-8 px-8 z-30"
-                     style="width: 100vw; margin-left: calc(-50vw + 50%);"
-                     @mouseenter="showMegaMenu = true"
-                     @mouseleave="showMegaMenu = false">
-                  <div class="grid grid-cols-3 gap-8 max-w-7xl mx-auto">
+    as="nav"
+    :class="[
+      'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+      isScrolledDown
+        ? 'bg-neutral-950/80 backdrop-blur-md border-b border-neutral-800 shadow-xl'
+        : 'bg-transparent border-b border-transparent'
+    ]"
+    v-slot="{ open, close }"
+  >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-18">
+        <!-- Logo / Brand -->
+        <router-link to="/" class="flex items-center gap-2.5 group">
+          <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-200">
+            <span class="text-lg">🦕</span>
+          </div>
+          <span class="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors">
+            Vue Dinosaurs
+          </span>
+        </router-link>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center gap-1">
+          <router-link
+            v-for="link in links"
+            :key="link.name"
+            :to="link.href"
+            class="px-3.5 py-2 text-sm font-medium text-neutral-300 rounded-lg transition-colors hover:text-white hover:bg-neutral-800/60"
+            active-class="text-white bg-neutral-800/80 font-semibold"
+          >
+            {{ link.name }}
+          </router-link>
+
+          <!-- Resources Mega Menu Dropdown -->
+          <div
+            class="relative"
+            @mouseenter="showMegaMenu = true"
+            @mouseleave="showMegaMenu = false"
+          >
+            <button
+              type="button"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg transition-colors text-neutral-300 hover:text-white hover:bg-neutral-800/60"
+              :class="{ 'text-white bg-neutral-800/60': showMegaMenu }"
+              aria-expanded="showMegaMenu"
+            >
+              <span>Resources</span>
+              <svg
+                class="w-4 h-4 text-neutral-400 transition-transform duration-200"
+                :class="{ 'rotate-180 text-white': showMegaMenu }"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Floating Mega Menu Panel -->
+            <transition
+              enter-active-class="transition ease-out duration-200"
+              enter-from-class="opacity-0 translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition ease-in duration-150"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 translate-y-2"
+            >
+              <div
+                v-if="showMegaMenu"
+                class="absolute right-0 top-full pt-3 w-[720px] z-50"
+              >
+                <div class="rounded-2xl border border-neutral-800 bg-neutral-900/95 p-6 shadow-2xl backdrop-blur-xl">
+                  <div class="grid grid-cols-3 gap-6">
+                    <!-- Column 1 -->
                     <div>
-                      <h3 class="font-bold mb-2 text-gray-700 dark:text-white">Documentation</h3>
-                      <ul>
-                        <li><router-link to="/docs/getting-started" class="block py-1 text-gray-600 dark:text-gray-300 hover:underline">Getting Started</router-link></li>
-                        <li><router-link to="/docs/api" class="block py-1 text-gray-600 dark:text-gray-300 hover:underline">API Reference</router-link></li>
+                      <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-3">
+                        Documentation
+                      </h4>
+                      <ul class="space-y-2">
+                        <li>
+                          <router-link
+                            to="/docs/getting-started"
+                            class="group block p-2 rounded-lg transition hover:bg-neutral-800/60"
+                          >
+                            <div class="text-sm font-medium text-neutral-200 group-hover:text-emerald-400">
+                              Getting Started
+                            </div>
+                            <div class="text-xs text-neutral-500">Quick guides & dinosaur anatomy</div>
+                          </router-link>
+                        </li>
+                        <li>
+                          <router-link
+                            to="/docs/api"
+                            class="group block p-2 rounded-lg transition hover:bg-neutral-800/60"
+                          >
+                            <div class="text-sm font-medium text-neutral-200 group-hover:text-emerald-400">
+                              API Reference
+                            </div>
+                            <div class="text-xs text-neutral-500">Full schema & endpoints</div>
+                          </router-link>
+                        </li>
                       </ul>
                     </div>
+
+                    <!-- Column 2 -->
                     <div>
-                      <h3 class="font-bold mb-2 text-gray-700 dark:text-white">Community</h3>
-                      <ul>
-                        <li><a href="https://forum.vuejs.org" target="_blank" class="block py-1 text-gray-600 dark:text-gray-300 hover:underline">Forum</a></li>
-                        <li><a href="https://chat.vuejs.org" target="_blank" class="block py-1 text-gray-600 dark:text-gray-300 hover:underline">Chat</a></li>
+                      <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-3">
+                        Community
+                      </h4>
+                      <ul class="space-y-2">
+                        <li>
+                          <a
+                            href="https://forum.vuejs.org"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group block p-2 rounded-lg transition hover:bg-neutral-800/60"
+                          >
+                            <div class="text-sm font-medium text-neutral-200 group-hover:text-emerald-400 flex items-center justify-between">
+                              <span>Forum</span>
+                              <span class="text-xs text-neutral-500">↗</span>
+                            </div>
+                            <div class="text-xs text-neutral-500">Discussions & Q&A</div>
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            href="https://chat.vuejs.org"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group block p-2 rounded-lg transition hover:bg-neutral-800/60"
+                          >
+                            <div class="text-sm font-medium text-neutral-200 group-hover:text-emerald-400 flex items-center justify-between">
+                              <span>Discord Chat</span>
+                              <span class="text-xs text-neutral-500">↗</span>
+                            </div>
+                            <div class="text-xs text-neutral-500">Real-time collaboration</div>
+                          </a>
+                        </li>
                       </ul>
                     </div>
+
+                    <!-- Column 3 -->
                     <div>
-                      <h3 class="font-bold mb-2 text-gray-700 dark:text-white">Tools</h3>
-                      <ul>
-                        <li><a href="https://vitejs.dev" target="_blank" class="block py-1 text-gray-600 dark:text-gray-300 hover:underline">Vite</a></li>
-                        <li><a href="https://pinia.vuejs.org" target="_blank" class="block py-1 text-gray-600 dark:text-gray-300 hover:underline">Pinia</a></li>
+                      <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-3">
+                        Ecosystem Tools
+                      </h4>
+                      <ul class="space-y-2">
+                        <li>
+                          <a
+                            href="https://vitejs.dev"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group block p-2 rounded-lg transition hover:bg-neutral-800/60"
+                          >
+                            <div class="text-sm font-medium text-neutral-200 group-hover:text-emerald-400 flex items-center justify-between">
+                              <span>Vite</span>
+                              <span class="text-xs text-neutral-500">↗</span>
+                            </div>
+                            <div class="text-xs text-neutral-500">Fast frontend tooling</div>
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            href="https://pinia.vuejs.org"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group block p-2 rounded-lg transition hover:bg-neutral-800/60"
+                          >
+                            <div class="text-sm font-medium text-neutral-200 group-hover:text-emerald-400 flex items-center justify-between">
+                              <span>Pinia</span>
+                              <span class="text-xs text-neutral-500">↗</span>
+                            </div>
+                            <div class="text-xs text-neutral-500">Intuitive state management</div>
+                          </a>
+                        </li>
                       </ul>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- End Mega Dropdown -->
-            </div>
+            </transition>
           </div>
         </div>
-        <!-- ...rest unchanged... -->
-        <div class="-mr-2 flex sm:hidden">
+
+        <!-- Mobile Menu Hamburger Button -->
+        <div class="flex md:hidden">
           <DisclosureButton
-            class="inline-flex items-center justify-center p-2 rounded-md text-info hover:text-white hover:bg-primary transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-            <span class="sr-only">Open main menu</span>
+            class="inline-flex items-center justify-center p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+          >
+            <span class="sr-only">Toggle Navigation</span>
             <MenuIcon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
             <XIcon v-else class="block h-6 w-6" aria-hidden="true" />
           </DisclosureButton>
         </div>
       </div>
     </div>
-    <!-- ...rest unchanged... -->
-    <DisclosurePanel class="sm:hidden">
-      <div class="px-2 pt-2 pb-3 space-y-1">
-        <router-link v-for="link in links" :key="link.name" :to="link.href"
-          class="menu-link-mobile text-gray-300 block px-3 py-2 rounded-md text-base font-medium relative">
-          {{ link.name }}
-        </router-link>
-        <!-- Add Resources to mobile menu if needed -->
-        <div>
-          <span class="menu-link-mobile text-gray-300 block px-3 py-2 rounded-md text-base font-medium relative">Resources</span>
-          <div class="pl-4">
-            <router-link to="/docs/getting-started" class="block py-1 text-gray-400 hover:underline">Getting Started</router-link>
-            <router-link to="/docs/api" class="block py-1 text-gray-400 hover:underline">API Reference</router-link>
-            <a href="https://forum.vuejs.org" target="_blank" class="block py-1 text-gray-400 hover:underline">Forum</a>
-            <a href="https://chat.vuejs.org" target="_blank" class="block py-1 text-gray-400 hover:underline">Chat</a>
-            <a href="https://vitejs.dev" target="_blank" class="block py-1 text-gray-400 hover:underline">Vite</a>
-            <a href="https://pinia.vuejs.org" target="_blank" class="block py-1 text-gray-400 hover:underline">Pinia</a>
+
+    <!-- Mobile Drawer Panel -->
+    <transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="opacity-0 -translate-y-2"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 -translate-y-2"
+    >
+      <DisclosurePanel class="md:hidden border-b border-neutral-800 bg-neutral-900/95 px-4 pt-3 pb-6 space-y-4 backdrop-blur-xl">
+        <div class="space-y-1">
+          <router-link
+            v-for="link in links"
+            :key="link.name"
+            :to="link.href"
+            class="block px-3 py-2.5 rounded-lg text-base font-medium text-neutral-300 hover:text-white hover:bg-neutral-800"
+            active-class="text-white bg-neutral-800/80 font-semibold"
+            @click="close"
+          >
+            {{ link.name }}
+          </router-link>
+        </div>
+
+        <!-- Mobile Resources Section -->
+        <div class="pt-4 border-t border-neutral-800">
+          <p class="px-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+            Resources & Ecosystem
+          </p>
+          <div class="mt-2 space-y-1">
+            <router-link
+              to="/docs/getting-started"
+              class="block px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-neutral-800"
+              @click="close"
+            >
+              Getting Started
+            </router-link>
+            <router-link
+              to="/docs/api"
+              class="block px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-neutral-800"
+              @click="close"
+            >
+              API Reference
+            </router-link>
+            <a
+              href="https://forum.vuejs.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-neutral-800"
+            >
+              Vue Forum ↗
+            </a>
+            <a
+              href="https://pinia.vuejs.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-neutral-800"
+            >
+              Pinia State Store ↗
+            </a>
           </div>
         </div>
-      </div>
-    </DisclosurePanel>
+      </DisclosurePanel>
+    </transition>
   </Disclosure>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
-import { MenuIcon, XIcon } from "@heroicons/vue/outline";
+import { ref, onMounted, onUnmounted } from 'vue';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
+import { MenuIcon, XIcon } from '@heroicons/vue/outline';
 
 const isScrolledDown = ref(false);
 const showMegaMenu = ref(false);
@@ -105,92 +278,15 @@ const links = [
 ];
 
 const checkScroll = () => {
-  isScrolledDown.value = window.scrollY > 100;
+  isScrolledDown.value = window.scrollY > 20;
 };
 
-window.addEventListener('scroll', checkScroll);
-
 onMounted(() => {
+  window.addEventListener('scroll', checkScroll, { passive: true });
   checkScroll();
 });
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', checkScroll);
+});
 </script>
-
-<style scoped>
-.menu-link {
-  position: relative;
-  transition: color 0.2s;
-}
-
-.menu-link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 4px;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, #38bdf8 0%, #6366f1 100%);
-  transform: scaleX(0);
-  transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
-  border-radius: 1px;
-}
-
-.menu-link:hover::after,
-.menu-link:focus::after {
-  transform: scaleX(1);
-}
-
-.menu-link-mobile {
-  position: relative;
-  transition: color 0.2s;
-}
-
-.menu-link-mobile::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 4px;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, #38bdf8 0%, #6366f1 100%);
-  transform: scaleX(0);
-  transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
-  border-radius: 1px;
-}
-
-.menu-link-mobile:hover::after,
-.menu-link-mobile:focus::after {
-  transform: scaleX(1);
-}
-
-/* Mega menu styles */
-.mega-menu {
-  min-width: 800px;
-  max-width: 1200px;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  padding: 2rem 3rem;
-  transition: box-shadow 0.2s;
-  display: flex;
-  gap: 2rem;
-}
-
-.dark .mega-menu {
-  background: #1e293b;
-  border-color: #334155;
-  box-shadow: 0 8px 32px rgba(30,41,59,0.24);
-}
-
-/* Full width mega menu override */
-.full-width-mega-menu {
-  width: 100vw !important;
-  left: 0 !important;
-  right: 0 !important;
-  margin-left: calc(-50vw + 50%) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
-  border-left: none !important;
-  border-right: none !important;
-  border-radius: 0 !important;
-}
-</style>
