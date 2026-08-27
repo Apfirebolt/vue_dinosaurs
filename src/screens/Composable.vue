@@ -78,19 +78,37 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import Fuse from "fuse.js";
 import { useDinosaur } from "../composables/useDinosaur";
 import Loader from "../components/Loader.vue";
 
 const { dinosaurs, getDinosaur, loading } = useDinosaur();
 const searchQuery = ref("");
 
+// Fuse.js configuration
+const fuseOptions = {
+  keys: [
+    { name: "Name", weight: 0.7 },
+    { name: "Description", weight: 0.3 }
+  ],
+  threshold: 0.35, // Balanced fuzziness (lower = stricter)
+  ignoreLocation: true,
+  minMatchCharLength: 2,
+};
+
+// Reactive Fuse instance that updates when dinosaur list changes
+const fuseInstance = computed(() => {
+  return new Fuse(dinosaurs.value || [], fuseOptions);
+});
+
+// Fuzzy search computation
 const filteredDinosaurs = computed(() => {
-  if (!searchQuery.value.trim()) return dinosaurs.value || [];
-  const query = searchQuery.value.toLowerCase();
-  return (dinosaurs.value || []).filter((dino) =>
-    (dino.Name && dino.Name.toLowerCase().includes(query)) ||
-    (dino.Description && dino.Description.toLowerCase().includes(query))
-  );
+  const query = searchQuery.value.trim();
+  if (!query || query.length < 2) {
+    return dinosaurs.value || [];
+  }
+  const results = fuseInstance.value.search(query);
+  return results.map((res) => res.item);
 });
 
 onMounted(() => {

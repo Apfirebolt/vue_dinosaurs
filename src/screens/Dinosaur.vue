@@ -87,6 +87,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
+import Fuse from "fuse.js";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
@@ -151,6 +152,35 @@ const onGridReady = (params) => {
   gridApi.value = params.api;
 };
 
+// Fuse.js Configuration
+const fuseOptions = {
+  keys: [
+    { name: "name", weight: 0.4 },
+    { name: "diet", weight: 0.2 },
+    { name: "lived_in", weight: 0.2 },
+    { name: "period", weight: 0.1 },
+    { name: "taxonomy", weight: 0.1 },
+  ],
+  threshold: 0.35,
+  ignoreLocation: true,
+  minMatchCharLength: 2,
+};
+
+// Reactive Fuse instance that updates whenever rawResults changes
+const fuseInstance = computed(() => {
+  return new Fuse(rawResults.value, fuseOptions);
+});
+
+// Fuzzy Search via Fuse.js
+const filteredRowData = computed(() => {
+  const query = searchText.value.trim();
+  if (!query || query.length < 2) {
+    return rawResults.value;
+  }
+  const results = fuseInstance.value.search(query);
+  return results.map((result) => result.item);
+});
+
 const getDinosaurData = async () => {
   try {
     loading.value = true;
@@ -165,20 +195,6 @@ const getDinosaurData = async () => {
     loading.value = false;
   }
 };
-
-const filteredRowData = computed(() => {
-  if (!searchText.value.trim()) {
-    return rawResults.value;
-  }
-  const query = searchText.value.toLowerCase();
-  return rawResults.value.filter(
-    (dino) =>
-      dino.name?.toLowerCase().includes(query) ||
-      dino.diet?.toLowerCase().includes(query) ||
-      dino.lived_in?.toLowerCase().includes(query) ||
-      dino.period?.toLowerCase().includes(query)
-  );
-});
 
 const clearFilters = () => {
   searchText.value = "";
