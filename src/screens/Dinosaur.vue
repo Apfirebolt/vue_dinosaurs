@@ -155,7 +155,7 @@ const getDinosaurData = async () => {
   try {
     loading.value = true;
     const response = await axios.get(
-      `https://softgenie.org/api/dinosaur?page=${currentPage.value}`
+      `/api/dinosaur?page=${currentPage.value}`
     );
     dinosaurData.value = response.data;
     rawResults.value = response.data.results || [];

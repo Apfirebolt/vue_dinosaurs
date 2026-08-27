@@ -9,6 +9,13 @@ export default defineConfig({
     environment: 'happy-dom',
   },
   server: {
-    port: 8080
+    port: 8080,
+    proxy: {
+      '/api': {
+        target: 'https://softgenie.org',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
   }
 })
