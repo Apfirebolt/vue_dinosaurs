@@ -1,84 +1,91 @@
 <template>
-  <div class="min-h-screen bg-info flex items-center justify-center">
-    <div class="bg-white shadow-lg rounded-lg p-4">
-      <h1 class="text-4xl font-bold text-primary text-center mb-4">
-        Dinosaurs
-      </h1>
-      <p class="text-dark leading-relaxed mb-4">
-        Welcome to the world of dinosaurs! These magnificent creatures roamed
-        the Earth millions of years ago, and their legacy continues to fascinate
-        us today. From the towering Brachiosaurus to the fierce Tyrannosaurus
-        rex, dinosaurs come in all shapes and sizes.
-      </p>
-      <p class="text-gray-700 leading-relaxed mb-4">
-        Explore the mysteries of their existence, learn about their habitats,
-        and uncover the secrets of their extinction. Whether you're a
-        paleontology enthusiast or just curious, there's always something new to
-        discover about dinosaurs.
-      </p>
-      <p class="text-gray-700 leading-relaxed mb-5">
-        Thank you for joining us on this prehistoric journey. Let's dive into
-        the age of dinosaurs together!
-      </p>
-
-      <Loader v-if="loading" />
-
-      <div class="flex items-center space-x-3 mb-4">
-        <input
-          v-model="searchText"
-          type="text"
-          placeholder="Search Dinosaurs..."
-          class="border border-gray-300 rounded px-3 py-2 w-full"
-        />
-        <button
-          @click="clearFilters"
-          class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300"
-          title="Clear search and grid filters"
-        >
-          Clear Filters
-        </button>
+  <div class="min-h-screen bg-emerald-900 text-neutral-100 pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto space-y-8">
+      <div class="text-center max-w-3xl mx-auto space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold uppercase tracking-wider border border-emerald-500/20">
+          <span>🦖 Fossil Registry</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          Dinosaur Classification Database
+        </h1>
+        <p class="text-sm sm:text-base text-neutral-100">
+          Explore complete taxonomic data, diet profiles, historical periods, and fossil excavation locales.
+        </p>
       </div>
 
-      <ag-grid-vue
-        v-if="dinosaurData"
-        class="ag-theme-alpine"
-        style="width: 100%; height: 400px"
-        :columnDefs="columnDefs"
-        :rowData="dinosaurData.results"
-        :modules="modules"
-        :defaultColDef="defaultColDef"
-        :rowClassRules="rowClasses"
-        :gridOptions="gridOptions"
-        @grid-ready="onGridReady"
-      />
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="relative w-full sm:w-80">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-neutral-500">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </span>
+          <input
+            v-model="searchText"
+            type="text"
+            placeholder="Quick search records..."
+            class="w-full rounded-xl border border-neutral-800 bg-neutral-900/80 pl-10 pr-4 py-2 text-sm text-white placeholder-neutral-500 outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+          />
+        </div>
 
-      <div class="flex justify-between mt-4">
-        <button
-          @click="goToPreviousPage"
-          :disabled="!dinosaurData || !dinosaurData.previous"
-          class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Previous
-        </button>
-        <button
-          @click="goToNextPage"
-          :disabled="!dinosaurData || !dinosaurData.next"
-          class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Next
-        </button>
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <button
+            type="button"
+            @click="clearFilters"
+            class="rounded-lg border border-neutral-800 bg-neutral-900 px-3.5 py-2 text-xs font-medium text-neutral-300 transition hover:bg-neutral-800 hover:text-white"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
 
+      <div class="relative rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4 shadow-2xl backdrop-blur-xl">
+        <Loader v-if="loading" message="Loading fossil records..." :full-screen="false" />
+
+        <div v-show="!loading" class="w-full h-[520px]">
+          <ag-grid-vue
+            class="ag-theme-alpine-dark custom-dino-grid w-full h-full"
+            :columnDefs="columnDefs"
+            :rowData="filteredRowData"
+            :modules="modules"
+            :defaultColDef="defaultColDef"
+            :gridOptions="gridOptions"
+            @grid-ready="onGridReady"
+          />
+        </div>
+
+        <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-neutral-800/80 pt-4">
+          <span class="text-xs text-neutral-100 font-mono">
+            Page <strong class="text-white">{{ currentPage }}</strong>
+            <span v-if="dinosaurData?.count"> • Total Records: {{ dinosaurData.count }}</span>
+          </span>
+
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="goToPreviousPage"
+              :disabled="!dinosaurData?.previous || loading"
+              class="rounded-lg border border-neutral-800 bg-neutral-900 px-3.5 py-2 text-xs font-semibold text-neutral-300 transition hover:bg-neutral-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              @click="goToNextPage"
+              :disabled="!dinosaurData?.next || loading"
+              class="rounded-lg border border-neutral-800 bg-neutral-900 px-3.5 py-2 text-xs font-semibold text-neutral-300 transition hover:bg-neutral-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
-<style>
-.red-row {
-  background-color: #ffcccc; /* Light red background for carnivorous dinosaurs */
-}
-</style>
+
 <script setup>
-import { onMounted, ref, computed, watchEffect, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
@@ -87,66 +94,61 @@ import { AgGridVue } from "@ag-grid-community/vue3";
 import Loader from "../components/Loader.vue";
 
 const dinosaurData = ref(null);
+const rawResults = ref([]);
 const loading = ref(false);
 const currentPage = ref(1);
 const searchText = ref("");
-const modules = ref([ClientSideRowModelModule]);
+const gridApi = ref(null);
 
-// ag grid config
-const columnDefs = ref([
-  { field: "id", headerName: "ID", sortable: true, filter: true },
-  { field: "name", headerName: "Name", sortable: true, filter: true },
-  { field: "diet", headerName: "Diet", sortable: true, filter: true },
-  { field: "period", headerName: "Period", sortable: true, filter: true },
-  { field: "lived_in", headerName: "Lived In", sortable: true, filter: true },
-  { field: "type", headerName: "Type", sortable: true, filter: true },
-  { field: "length", headerName: "Length", sortable: true, filter: true },
-  { field: "taxonomy", headerName: "Taxonomy", sortable: true, filter: true },
-  { field: "named_by", headerName: "Named By", sortable: true, filter: true },
-  { field: "species", headerName: "Species", sortable: true, filter: true },
-]);
+const modules = ref([ClientSideRowModelModule]);
 
 const defaultColDef = ref({
   flex: 1,
-  minWidth: 100,
+  minWidth: 120,
+  sortable: true,
+  filter: true,
   resizable: true,
 });
 
-const rowClasses = ref({
-  carnivorous: "red-row",
-  herbivorous: "green-row",
-  omnivorous: "blue-row",
-});
+const columnDefs = ref([
+  { field: "id", headerName: "ID", width: 70, flex: 0.5 },
+  { 
+    field: "name", 
+    headerName: "Name", 
+    cellClass: "font-semibold text-white",
+    pinned: "left"
+  },
+  { 
+    field: "diet", 
+    headerName: "Diet",
+    cellRenderer: (params) => {
+      if (!params.value) return "—";
+      const diet = params.value.toLowerCase();
+      let badgeClass = "bg-neutral-800 text-neutral-400";
+      if (diet.includes("carnivorous")) badgeClass = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+      else if (diet.includes("herbivorous")) badgeClass = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+      else if (diet.includes("omnivorous")) badgeClass = "bg-sky-500/10 text-sky-400 border border-sky-500/20";
+
+      return `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs capitalize ${badgeClass}">${params.value}</span>`;
+    }
+  },
+  { field: "period", headerName: "Period" },
+  { field: "lived_in", headerName: "Lived In" },
+  { field: "type", headerName: "Type" },
+  { field: "length", headerName: "Length" },
+  { field: "taxonomy", headerName: "Taxonomy", minWidth: 160 },
+  { field: "named_by", headerName: "Named By", minWidth: 150 },
+  { field: "species", headerName: "Species" },
+]);
 
 const gridOptions = ref({
   animateRows: true,
-  rowHeight: 30,
-  headerHeight: 50,
-  getRowClass: (params) => {
-    if (params.data.diet === 'carnivorous') {
-      return 'red-row';
-    }
-    return '';
-  }
-});
-
-const customTheme = ref({
-  header: {
-    backgroundColor: "#1D1616",
-    color: "#FFF",
-  },
+  rowHeight: 44,
+  headerHeight: 44,
 });
 
 const onGridReady = (params) => {
-  // expose the grid API so other functions (like clearFilters) can access it
-  gridOptions.value.api = params.api;
-  gridOptions.value.columnApi = params.columnApi;
-
-  const headerCells = document.querySelectorAll(".ag-header-cell");
-  headerCells.forEach((cell) => {
-    cell.style.backgroundColor = customTheme.value.header.backgroundColor;
-    cell.style.color = customTheme.value.header.color;
-  });
+  gridApi.value = params.api;
 };
 
 const getDinosaurData = async () => {
@@ -156,6 +158,7 @@ const getDinosaurData = async () => {
       `https://softgenie.org/api/dinosaur?page=${currentPage.value}`
     );
     dinosaurData.value = response.data;
+    rawResults.value = response.data.results || [];
   } catch (error) {
     console.error("Error fetching dinosaur data:", error);
   } finally {
@@ -163,23 +166,37 @@ const getDinosaurData = async () => {
   }
 };
 
+const filteredRowData = computed(() => {
+  if (!searchText.value.trim()) {
+    return rawResults.value;
+  }
+  const query = searchText.value.toLowerCase();
+  return rawResults.value.filter(
+    (dino) =>
+      dino.name?.toLowerCase().includes(query) ||
+      dino.diet?.toLowerCase().includes(query) ||
+      dino.lived_in?.toLowerCase().includes(query) ||
+      dino.period?.toLowerCase().includes(query)
+  );
+});
+
 const clearFilters = () => {
   searchText.value = "";
-  // also clear ag grid filters if needed
-  if (gridOptions.value.api) {
-    gridOptions.value.api.setFilterModel(null);
+  if (gridApi.value) {
+    gridApi.value.setFilterModel(null);
+    gridApi.value.setQuickFilter("");
   }
 };
 
 const goToNextPage = () => {
-  if (dinosaurData.value && dinosaurData.value.next) {
+  if (dinosaurData.value?.next) {
     currentPage.value++;
     getDinosaurData();
   }
 };
 
 const goToPreviousPage = () => {
-  if (dinosaurData.value && dinosaurData.value.previous) {
+  if (dinosaurData.value?.previous && currentPage.value > 1) {
     currentPage.value--;
     getDinosaurData();
   }
@@ -188,22 +205,19 @@ const goToPreviousPage = () => {
 onMounted(() => {
   getDinosaurData();
 });
-
-watch(searchText, (newValue) => {
-  if (dinosaurData.value && newValue) {
-    const filteredResults = dinosaurData.value.results.filter((dino) =>
-      dino.name.toLowerCase().includes(newValue.toLowerCase()) || dino.diet.toLowerCase().includes(newValue.toLowerCase()) 
-      || dino.lived_in.toLowerCase().includes(newValue.toLowerCase())
-    );
-    dinosaurData.value.results = filteredResults;
-  } else {
-    getDinosaurData();
-  }
-});
 </script>
 
 <style>
-.red-row {
-  background-color: #ffcccc; /* Light red background for carnivorous dinosaurs */
+.custom-dino-grid {
+  --ag-background-color: transparent;
+  --ag-header-background-color: rgba(23, 23, 23, 0.7);
+  --ag-border-color: rgba(64, 64, 64, 0.4);
+  --ag-row-hover-color: rgba(38, 38, 38, 0.6);
+  --ag-foreground-color: #d4d4d4;
+  --ag-header-foreground-color: #ffffff;
+  --ag-font-size: 13px;
+  font-family: inherit;
+  border-radius: 0.75rem;
+  overflow: hidden;
 }
 </style>
