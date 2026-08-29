@@ -33,8 +33,11 @@ pipeline {
             }
             steps {
                 sh '''
-                    echo "Starting or reloading Express server with PM2 on port 3000..."
-                    pm2 startOrReload ecosystem.config.cjs || pm2 start server.js --name "vue-dinosaurs" --env PORT=3000
+                    echo "Starting or restarting Express server with PM2..."
+                    
+                    # If process exists, restart it and update environment variables; otherwise, start a fresh process
+                    pm2 restart vue-dinosaurs --update-env || pm2 start server.js --name "vue-dinosaurs" --env PORT=3000
+                    
                     pm2 save
                 '''
             }
@@ -50,3 +53,4 @@ pipeline {
         }
     }
 }
+
