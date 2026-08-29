@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         PORT = '3000'
-        NODE_ENV = 'production'
     }
 
     stages {
@@ -19,8 +18,8 @@ pipeline {
         stage('Install & Build') {
             steps {
                 sh '''
-                    echo "Installing dependencies..."
-                    npm ci
+                    echo "Installing dependencies (including build devDependencies)..."
+                    npm ci --include=dev
 
                     echo "Building Vite application..."
                     npm run build
@@ -29,6 +28,9 @@ pipeline {
         }
 
         stage('Deploy & Serve') {
+            environment {
+                NODE_ENV = 'production'
+            }
             steps {
                 sh '''
                     echo "Starting or reloading Express server with PM2 on port 3000..."
